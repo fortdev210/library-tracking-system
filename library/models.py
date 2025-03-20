@@ -1,4 +1,7 @@
+from datetime import timedelta
+
 from django.db import models
+from django.utils import timezone
 from django.contrib.auth.models import User
 
 class Author(models.Model):
@@ -41,6 +44,17 @@ class Loan(models.Model):
     loan_date = models.DateField(auto_now_add=True)
     return_date = models.DateField(null=True, blank=True)
     is_returned = models.BooleanField(default=False)
+    due_date = models.DateField()
 
     def __str__(self):
         return f"{self.book.title} loaned to {self.member.user.username}"
+    
+    
+    def save(self, *args, **kwargs):
+        if not self.due_date:
+            self.due_date = self.loan_date + timedelta(days=14)
+        super().save(*args, **kwargs)
+
+
+    def is_overdue(self):
+        return self.due_date < timezone.now().date() and not self.is_returned
