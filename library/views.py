@@ -80,13 +80,6 @@ class LoanViewSet(viewsets.ModelViewSet):
     queryset = Loan.objects.all()
     serializer_class = LoanSerializer
     
-    def list(self, request):
-        user = request.user
-        loans = Loan.objects.filter(member__user=user)
-        serializer = LoanSerializer(loans, many=True)
-        return Response(serializer.data)
-
-
     @action(detail=True, methods=['post'])
     def extend_due_date(self, request, pk=None):
         loan = self.get_object()
