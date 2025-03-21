@@ -98,7 +98,7 @@ class LoanViewSet(viewsets.ModelViewSet):
         if not isinstance(additional_days, int) or additional_days < 0:
             return Response({'error': 'Additional days must be a non-negative integer.'}, status=status.HTTP_400_BAD_REQUEST)
         
-        new_due_date  += timedelta(days=additional_days)
+        new_due_date  = loan.due_date + timedelta(days=additional_days)
         loan.due_date = new_due_date
         loan.save()
         return Response({'status': 'Due date extended successfully.'}, status=status.HTTP_200_OK)
